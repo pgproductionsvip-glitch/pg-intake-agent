@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Intake Agent — PG Productions</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --surface2: #1a1a1a;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --accent: #c8f54a;
+  --accent2: #8aff6e;
+  --text: #f0ede8;
+  --muted: #888;
+  --muted2: #555;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --radius: 12px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  width: 100%;
+  max-width: 720px;
+  padding: 2rem 1.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.logo span { color: var(--accent); }
+
+.phase-badge {
+  font-size: 11px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(200,245,74,0.08);
+  border: 1px solid rgba(200,245,74,0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.main {
+  width: 100%;
+  max-width: 720px;
+  padding: 0 1.5rem 4rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.intro-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 2rem 2rem 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.intro-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+}
+
+.intro-title {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.intro-sub {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+}
+
+.output-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  font-size: 11px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+
+.tag-green { color: var(--accent); border-color: rgba(200,245,74,0.25); background: rgba(200,245,74,0.06); }
+.tag-gray { color: var(--muted); border-color: var(--border); background: transparent; }
+
+.chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.msg {
+  display: flex;
+  gap: 12px;
+  animation: fadeUp 0.3s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.msg-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-family: var(--font-head);
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.avatar-ai {
+  background: rgba(200,245,74,0.12);
+  border: 1px solid rgba(200,245,74,0.25);
+  color: var(--accent);
+  font-size: 11px;
+}
+
+.avatar-user {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.msg-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.msg-name {
+  font-size: 11px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--muted2);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.msg-content {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.msg-content.ai { color: #e8e5e0; }
+.msg-content.user { color: var(--muted); }
+
+.msg-content strong { color: var(--accent); font-weight: 500; }
+.msg-content em { color: var(--muted); font-style: normal; font-size: 13px; }
+
+.msg-content h3 {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 1.25rem 0 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.msg-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.msg-content ul li {
+  padding: 6px 0;
+  padding-left: 16px;
+  position: relative;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.msg-content ul li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-size: 11px;
+}
+
+.msg-content .output-block {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.25rem;
+  margin: 0.75rem 0;
+}
+
+.msg-content .output-block .ob-label {
+  font-family: var(--font-head);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.msg-content .output-block p {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.65;
+}
+
+.msg-content .output-block ul { margin: 0.4rem 0; }
+
+.thinking {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+}
+
+.thinking-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.4;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 0.9; transform: scale(1.1); }
+}
+
+.input-area {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 1rem 1rem 1rem 1.25rem;
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  position: sticky;
+  bottom: 1.5rem;
+}
+
+.input-area:focus-within {
+  border-color: rgba(200,245,74,0.35);
+}
+
+textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  resize: none;
+  min-height: 24px;
+  max-height: 140px;
+  overflow-y: auto;
+  caret-color: var(--accent);
+}
+
+textarea::placeholder { color: var(--muted2); }
+
+.send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--accent);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.send-btn:hover { background: var(--accent2); transform: scale(1.04); }
+.send-btn:active { transform: scale(0.97); }
+.send-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+.send-btn svg { width: 16px; height: 16px; fill: #0a0a0a; }
+
+.progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  padding: 0 2px;
+}
+
+.progress-label {
+  font-size: 11px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  white-space: nowrap;
+}
+
+.progress-track {
+  flex: 1;
+  height: 3px;
+  background: var(--surface2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+
+.progress-pct {
+  font-size: 11px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 32px;
+  text-align: right;
+}
+
+.restart-btn {
+  display: none;
+  margin-top: 1rem;
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.restart-btn:hover { border-color: var(--border2); color: var(--text); }
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(200,245,74,0.08);
+  border: 1px solid rgba(200,245,74,0.2);
+  color: var(--accent);
+  font-family: var(--font-head);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.15s;
+}
+
+.copy-btn:hover { background: rgba(200,245,74,0.15); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">PG <span>Productions</span></div>
+  <div class="phase-badge">Brand Intake Agent</div>
+</div>
+
+<div class="main">
+  <div class="intro-card">
+    <div class="intro-title" id="intro-title">Choose your language / Elige tu idioma</div>
+    <div class="intro-sub" id="intro-sub">Select the language for your onboarding session. All deliverables will be generated in both English and Spanish.</div>
+    <div style="display:flex; gap:10px; margin-top:1.25rem;" id="lang-buttons">
+      <button onclick="selectLanguage('en')" style="flex:1; padding:12px; background:transparent; border:1px solid var(--border2); color:var(--text); font-family:var(--font-head); font-size:13px; font-weight:600; border-radius:8px; cursor:pointer; letter-spacing:0.06em; transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(200,245,74,0.5)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.13)'">🇺🇸 English</button>
+      <button onclick="selectLanguage('es')" style="flex:1; padding:12px; background:transparent; border:1px solid var(--border2); color:var(--text); font-family:var(--font-head); font-size:13px; font-weight:600; border-radius:8px; cursor:pointer; letter-spacing:0.06em; transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(200,245,74,0.5)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.13)'">🇪🇸 Español</button>
+    </div>
+    <div class="output-tags" style="margin-top:1rem;">
+      <span class="tag tag-green">5 video scripts</span>
+      <span class="tag tag-green">Hooks & angles</span>
+      <span class="tag tag-green">ICP profile</span>
+      <span class="tag tag-green">Value proposition</span>
+      <span class="tag tag-green">Production brief</span>
+      <span class="tag tag-gray">Meta 2026 ready · Bilingual</span>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <span class="progress-label" id="progress-label-text">Progress</span>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <span class="progress-pct" id="progress-pct">0%</span>
+  </div>
+
+  <div class="chat-container">
+    <div class="messages" id="messages"></div>
+    <div class="input-area">
+      <textarea id="input" placeholder="Escribe tu respuesta aquí..." rows="1"></textarea>
+      <button class="send-btn" id="send-btn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+    <button class="restart-btn" id="restart-btn" onclick="restartConversation()">↺ Nueva sesión</button>
+  </div>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `Eres el Brand Intake Agent de PG Productions, una agencia de marketing digital y producción audiovisual premium. Tu trabajo es entrevistar al cliente de forma conversacional — como un estratega de marca experto, no como un formulario.
+
+REGLAS DE COMPORTAMIENTO:
+- Haz UNA sola pregunta por mensaje. Nunca dos a la vez.
+- Sé directo, claro y profesional. Tono cercano pero ejecutivo.
+- Si una respuesta es vaga, pide claridad antes de seguir.
+- Valida brevemente cada respuesta antes de continuar (1 línea max).
+- Usa el nombre del cliente/negocio cuando lo tengas.
+- No hagas preguntas genéricas. Profundiza en lo que importa.
+
+FLUJO DE PREGUNTAS (en este orden exacto):
+1. Nombre del negocio y qué hace exactamente
+2. Cuál es su oferta principal y a qué precio la vende
+3. A quién le vende — describe a su cliente ideal con detalle (edad, trabajo, situación)
+4. Cuál es el dolor más grande que resuelve
+5. Qué resultado concreto obtiene el cliente (no beneficios, RESULTADOS medibles)
+6. Cuál es la transformación antes/después del cliente
+7. Por qué los clientes los eligen a ellos y no a la competencia
+8. Cuál es el proceso de venta actual (cómo llegan los leads, cómo cierran)
+9. Qué objeciones frecuentes tienen los prospectos
+10. Qué testimonios o casos de éxito tienen (pide números concretos)
+11. Cuál es el mayor problema que tienen HOY para conseguir clientes
+12. Qué han intentado antes y por qué no funcionó
+
+MARCO ESTRATÉGICO META 2026 — aplica esto al generar todos los entregables:
+
+Meta funciona hoy como un sistema de IA que aprende del contenido y los datos. El rendimiento de una campaña depende de tres elementos: datos confiables, contenido variado, e interpretación estratégica.
+
+REGLAS PARA SCRIPTS basadas en Meta 2026:
+1. VARIEDAD OBLIGATORIA — los 5 videos deben cubrir 5 intenciones distintas del usuario. Meta necesita variedad para probar qué mensaje conecta con cada persona:
+   - Video 1: usuario que NO conoce la marca → ángulo aspiracional o de historia
+   - Video 2: usuario con CURIOSIDAD → ángulo de problema o educativo
+   - Video 3: usuario COMPARANDO opciones → ángulo de credibilidad o testimonio
+   - Video 4: usuario con DUDAS u objeciones → ángulo de objeción o prueba social
+   - Video 5: usuario LISTO PARA ACTUAR → ángulo de oferta directa con CTA claro
+
+2. FORMATO VERTICAL NATIVO — cada script debe concebirse para Reels y Stories. El hook visual ocurre en los primeros 2-3 segundos. El mensaje debe funcionar sin sonido (claridad visual) y con sonido (emoción).
+
+3. CONTENIDO NATURAL > PRODUCCIÓN PERFECTA — al menos 2 de los 5 scripts deben tener tono UGC: primera persona, conversacional, como si el dueño del negocio hablara directo a cámara sin guión visible. Este tipo de contenido genera más confianza y se adapta mejor a Reels y Stories.
+
+4. HOOK EN LOS PRIMEROS 3 SEGUNDOS — cada script empieza con una línea de impacto que para el scroll. Nunca empieza con "hola", nombre o presentación.
+
+5. SEÑALES DE CONVERSIÓN — el CTA al final debe ser específico y accionable: "agenda tu llamada", "escríbeme hoy", "da clic al link". Nunca CTAs genéricos como "contáctanos".
+
+6. CADA PIEZA TIENE UNA FUNCIÓN — el equipo de producción necesita saber para qué sirve cada video dentro del sistema publicitario. Especifica la función de cada uno.
+
+Cuando hayas hecho las 12 preguntas y tengas respuestas suficientes, di exactamente: "GENERANDO_ENTREGABLES" y luego genera los 4 entregables en este formato:
+
+---
+### 🎯 ICP — CLIENTE IDEAL
+
+[Perfil detallado: edad, profesión, situación, dolor principal, resultado que busca, objeciones típicas, dónde está en el proceso de decisión]
+
+---
+### 💡 PROPUESTA DE VALOR
+
+[1 párrafo poderoso que resume la transformación: ANTES → DESPUÉS → POR QUÉ ELLOS]
+
+---
+### 🪝 HOOKS & ÁNGULOS (5 hooks listos para ads)
+
+1. [Hook para quien no conoce la marca]
+2. [Hook para quien tiene curiosidad]
+3. [Hook para quien está comparando]
+4. [Hook para quien tiene objeciones]
+5. [Hook para quien está listo para actuar]
+
+---
+### 🎬 SCRIPTS — 5 VIDEOS DE PAUTA
+
+Para cada video especifica: Ángulo · Función en Meta · Tono · Hook de apertura · Script completo
+
+**Video 1 — Aspiracional / Historia**
+Función: captar usuarios fríos que no conocen la marca
+Tono: emotivo, cercano, UGC
+Hook de apertura: [primera línea impactante]
+Script:
+[Script completo 30-45 seg / ≈120 palabras / en "tú"]
+
+**Video 2 — Problema / Educativo**
+Función: conectar con usuarios que tienen curiosidad
+Tono: directo, empático
+Hook de apertura: [primera línea impactante]
+Script:
+[Script completo]
+
+**Video 3 — Credibilidad / Testimonio**
+Función: convencer a usuarios que están comparando
+Tono: confiable, con datos reales
+Hook de apertura: [primera línea impactante]
+Script:
+[Script completo]
+
+**Video 4 — Objeción / Prueba social**
+Función: resolver dudas de usuarios que dudan
+Tono: conversacional, UGC natural
+Hook de apertura: [primera línea impactante]
+Script:
+[Script completo]
+
+**Video 5 — Oferta directa**
+Función: activar decisión en usuarios listos para actuar
+Tono: claro, urgente, con CTA específico
+Hook de apertura: [primera línea impactante]
+Script:
+[Script completo]
+
+---
+### 📋 BRIEF PARA PRODUCCIÓN
+
+[Instrucciones para el equipo de grabación: qué debe verse en cada video, sugerencias de locación/encuadre, qué videos deben verse naturales vs producidos, orden de grabación recomendado para optimizar la jornada de 4 horas]
+
+---
+
+REGLAS GENERALES DE ESCRITURA:
+- Hablar en "tú" (nunca "vos" ni "usted")
+- Empezar SIEMPRE con el dolor, el resultado o una pregunta disruptiva — nunca con presentación
+- Máximo 45 segundos de lectura (≈120 palabras por script)
+- Lenguaje natural, conversacional, sin jerga corporativa
+- Los scripts tipo UGC deben sonar como una persona hablando, con pausas naturales marcadas con "..."
+- El CTA debe ser específico: "agenda tu llamada gratis en el link", "escríbeme HOY con la palabra [X]"`;
+
+let conversationHistory = [];
+let questionCount = 0;
+let isGenerating = false;
+let outputText = '';
+let selectedLang = null;
+
+function selectLanguage(lang) {
+  selectedLang = lang;
+  document.getElementById('lang-buttons').style.display = 'none';
+  document.getElementById('intro-title').textContent = lang === 'en' 
+    ? "Know your business before we produce." 
+    : "Conoce tu negocio antes de producir.";
+  document.getElementById('intro-sub').textContent = lang === 'en'
+    ? "This agent asks the right questions to deeply understand the client's business. All deliverables are generated in both English and Spanish."
+    : "Este agente hace las preguntas correctas para entender el negocio a fondo. Los entregables se generan en inglés y español.";
+  document.getElementById('input').placeholder = lang === 'en' ? "Type your answer here..." : "Escribe tu respuesta aquí...";
+  document.getElementById('progress-label-text').textContent = lang === 'en' ? "Progress" : "Progreso";
+  document.getElementById('restart-btn').textContent = lang === 'en' ? "↺ New session" : "↺ Nueva sesión";
+  startConversation();
+}
+
+function updateProgress() {
+  const pct = Math.min(Math.round((questionCount / 12) * 100), 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+function addMessage(role, content) {
+  const messages = document.getElementById('messages');
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+
+  const isAI = role === 'assistant';
+  const avatarClass = isAI ? 'avatar-ai' : 'avatar-user';
+  const avatarText = isAI ? 'PG' : 'TÚ';
+  const nameText = isAI ? 'Brand Agent' : 'Cliente';
+  const contentClass = isAI ? 'ai' : 'user';
+
+  msg.innerHTML = `
+    <div class="msg-avatar ${avatarClass}">${avatarText}</div>
+    <div class="msg-body">
+      <div class="msg-name">${nameText}</div>
+      <div class="msg-content ${contentClass}">${formatContent(content)}</div>
+    </div>
+  `;
+
+  messages.appendChild(msg);
+  msg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  return msg;
+}
+
+function formatContent(text) {
+  if (!text) return '';
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/### (.+)/g, '<h3>$1</h3>')
+    .replace(/^---$/gm, '<hr style="border:none;border-top:1px solid rgba(255,255,255,0.07);margin:1rem 0">')
+    .replace(/^\d+\. (.+)/gm, (m, p1) => `<div style="padding:5px 0 5px 16px;position:relative;font-size:13px;color:#aaa;line-height:1.6"><span style="position:absolute;left:0;color:#c8f54a;font-size:11px">→</span>${p1}</div>`)
+    .replace(/^- (.+)/gm, (m, p1) => `<div style="padding:4px 0 4px 16px;position:relative;font-size:13px;color:#888;line-height:1.6"><span style="position:absolute;left:0;color:#c8f54a;font-size:11px">—</span>${p1}</div>`)
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
+}
+
+function showThinking() {
+  const messages = document.getElementById('messages');
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  msg.id = 'thinking-msg';
+  msg.innerHTML = `
+    <div class="msg-avatar avatar-ai">PG</div>
+    <div class="msg-body">
+      <div class="msg-name">Brand Agent</div>
+      <div class="thinking">
+        <div class="thinking-dot"></div>
+        <div class="thinking-dot"></div>
+        <div class="thinking-dot"></div>
+      </div>
+    </div>
+  `;
+  messages.appendChild(msg);
+  msg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
+function removeThinking() {
+  const t = document.getElementById('thinking-msg');
+  if (t) t.remove();
+}
+
+async function callClaude(messages) {
+  const response = await fetch('/.netlify/functions/claude', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json',  },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2000,
+      system: SYSTEM_PROMPT,
+      messages: messages
+    })
+  });
+  const data = await response.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.content[0].text;
+}
+
+async function startConversation() {
+  if (!selectedLang) return;
+  const initMsg = selectedLang === 'en' 
+    ? "Hello, I'm ready to start the onboarding process. My language is English."
+    : "Hola, estoy listo para comenzar el proceso de onboarding. Mi idioma es español.";
+  const systemWithLang = SYSTEM_PROMPT + `\n\nIDIOMA DE LA SESIÓN: El cliente eligió ${selectedLang === 'en' ? 'INGLÉS' : 'ESPAÑOL'}. Conduce TODA la entrevista en ${selectedLang === 'en' ? 'inglés' : 'español'}. Al generar los entregables, genera TODO en AMBOS idiomas: primero la versión en inglés completa, luego la versión en español completa, claramente separadas con encabezados "🇺🇸 ENGLISH VERSION" y "🇪🇸 VERSIÓN EN ESPAÑOL". Los scripts deben adaptar el tono naturalmente a cada idioma — no es traducción literal, es adaptación cultural.`;
+  showThinking();
+  try {
+    const response = await fetch('/.netlify/functions/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json',  },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        system: systemWithLang,
+        messages: [{ role: 'user', content: initMsg }]
+      })
+    });
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message);
+    const firstMsg = data.content[0].text;
+    removeThinking();
+    conversationHistory.push({ role: 'user', content: initMsg });
+    conversationHistory.push({ role: 'assistant', content: firstMsg });
+    addMessage('assistant', firstMsg);
+    questionCount = 1;
+    updateProgress();
+  } catch(e) {
+    removeThinking();
+    addMessage('assistant', selectedLang === 'en' ? 'Connection error. Please reload and try again.' : 'Error al conectar. Recarga la página e intenta de nuevo.');
+  }
+}
+
+async function sendMessage() {
+  const input = document.getElementById('input');
+  const text = input.value.trim();
+  if (!text || isGenerating) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  isGenerating = true;
+  document.getElementById('send-btn').disabled = true;
+
+  addMessage('user', text);
+  conversationHistory.push({ role: 'user', content: text });
+
+  showThinking();
+
+  try {
+    const systemWithLang = SYSTEM_PROMPT + `\n\nIDIOMA DE LA SESIÓN: El cliente eligió ${selectedLang === 'en' ? 'INGLÉS' : 'ESPAÑOL'}. Conduce TODA la entrevista en ${selectedLang === 'en' ? 'inglés' : 'español'}. Al generar los entregables, genera TODO en AMBOS idiomas: primero la versión en inglés completa, luego la versión en español completa, claramente separadas con encabezados "🇺🇸 ENGLISH VERSION" y "🇪🇸 VERSIÓN EN ESPAÑOL". Los scripts deben adaptar el tono naturalmente a cada idioma — no es traducción literal, es adaptación cultural.`;
+    const response = await fetch('/.netlify/functions/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json',  },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        system: systemWithLang,
+        messages: conversationHistory
+      })
+    });
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message);
+    const reply = data.content[0].text;
+    removeThinking();
+
+    const isOutputPhase = reply.includes('GENERANDO_ENTREGABLES');
+
+    if (isOutputPhase) {
+      questionCount = 12;
+      updateProgress();
+      const cleanReply = reply.replace('GENERANDO_ENTREGABLES', '').trim();
+      outputText = cleanReply;
+      conversationHistory.push({ role: 'assistant', content: cleanReply });
+      const msgEl = addMessage('assistant', cleanReply);
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'copy-btn';
+      copyBtn.innerHTML = selectedLang === 'en' ? '⬇ Copy deliverables' : '⬇ Copiar entregables';
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(outputText);
+        copyBtn.innerHTML = '✓ Copied';
+        setTimeout(() => copyBtn.innerHTML = selectedLang === 'en' ? '⬇ Copy deliverables' : '⬇ Copiar entregables', 2000);
+      };
+      msgEl.querySelector('.msg-body').appendChild(copyBtn);
+
+      document.getElementById('input').disabled = true;
+      document.getElementById('send-btn').disabled = true;
+      document.getElementById('restart-btn').style.display = 'inline-block';
+    } else {
+      conversationHistory.push({ role: 'assistant', content: reply });
+      addMessage('assistant', reply);
+      questionCount = Math.min(questionCount + 1, 11);
+      updateProgress();
+    }
+  } catch(e) {
+    removeThinking();
+    addMessage('assistant', selectedLang === 'en' ? 'There was an error. Please try again.' : 'Hubo un error. Intenta de nuevo.');
+  }
+
+  isGenerating = false;
+  document.getElementById('send-btn').disabled = false;
+}
+
+function restartConversation() {
+  conversationHistory = [];
+  questionCount = 0;
+  outputText = '';
+  isGenerating = false;
+  selectedLang = null;
+  document.getElementById('messages').innerHTML = '';
+  document.getElementById('input').disabled = false;
+  document.getElementById('send-btn').disabled = false;
+  document.getElementById('restart-btn').style.display = 'none';
+  document.getElementById('lang-buttons').style.display = 'flex';
+  document.getElementById('intro-title').textContent = 'Choose your language / Elige tu idioma';
+  document.getElementById('intro-sub').textContent = 'Select the language for your onboarding session. All deliverables will be generated in both English and Spanish.';
+  updateProgress();
+}
+
+const textarea = document.getElementById('input');
+textarea.addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 140) + 'px';
+});
+
+textarea.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+</script>
+</body>
+</html>
